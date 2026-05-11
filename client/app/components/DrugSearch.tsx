@@ -19,9 +19,15 @@ function useDebounced<T>(value: T, delay = 220): T {
 }
 
 // -----------------------------------------------------------------------------
-// Search section component.
+// Search section component. Two modes:
+//   - standalone (default): wraps in <section> + .card — its own page block
+//   - embedded            : just the form + detail, fits inside another card
 // -----------------------------------------------------------------------------
-export function DrugSearch() {
+export interface DrugSearchProps {
+  embedded?: boolean;
+}
+
+export function DrugSearch({ embedded = false }: DrugSearchProps = {}) {
   const { country } = useCountry();
   const [query, setQuery] = useState('');
   const [matches, setMatches] = useState<DrugMatch[]>([]);
@@ -101,22 +107,10 @@ export function DrugSearch() {
 
   const showHint = !info && !isLoading && !error && query.trim().length === 0;
 
-  return (
-    <section className="section drug-search">
-      <div className="section__head">
-        <h2 className="section__title">
-          Find a medicine
-          <span className="section__title-alt" lang="ar" dir="rtl">دوّر على دوا</span>
-        </h2>
-        <span className="section__hint">
-          Type a name (even if misspelled) — we’ll suggest alternatives in {country.name}.
-          <span className="section__hint-alt" lang="ar" dir="rtl">
-            اكتب اسم الدوا (حتى لو غلط) وهنجيبلك البدائل في {country.nameAr}.
-          </span>
-        </span>
-      </div>
-
-      <div className="card card--featured">
+  // The form + suggestions + detail card. Shared between standalone and
+  // embedded renderings.
+  const body = (
+    <>
         <form className="drug-search__form" onSubmit={handleSubmit} ref={containerRef}>
           <div className="drug-search__input-wrap">
             <Pill size={18} className="drug-search__input-icon" />
@@ -194,7 +188,28 @@ export function DrugSearch() {
         ) : null}
 
         {info ? <DrugInfoCard info={info} /> : null}
+    </>
+  );
+
+  if (embedded) {
+    return <div className="drug-search drug-search--embedded">{body}</div>;
+  }
+
+  return (
+    <section className="section drug-search">
+      <div className="section__head">
+        <h2 className="section__title">
+          Find a medicine
+          <span className="section__title-alt" lang="ar" dir="rtl">دوّر على دوا</span>
+        </h2>
+        <span className="section__hint">
+          Type a name (even if misspelled) — we’ll suggest alternatives in {country.name}.
+          <span className="section__hint-alt" lang="ar" dir="rtl">
+            اكتب اسم الدوا (حتى لو غلط) وهنجيبلك البدائل في {country.nameAr}.
+          </span>
+        </span>
       </div>
+      <div className="card card--featured">{body}</div>
     </section>
   );
 }

@@ -10,6 +10,15 @@
 }
 @media (max-width: 720px) { .drug-search__form { grid-template-columns: 1fr; } }
 
+/* embedded mode — when the search is rendered inside Intake's card,
+ * the parent card already supplies the chrome. */
+.drug-search--embedded { display: flex; flex-direction: column; gap: var(--s-3); }
+.drug-search--embedded .drug-info {
+  border-top: 1px solid var(--line);
+  padding-top: var(--s-5);
+  margin-top: var(--s-2);
+}
+
 .drug-search__input-wrap {
   position: relative;
   display: flex;

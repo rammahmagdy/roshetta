@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, type DragEvent } from 'react';
-import { Camera, UploadCloud, Lightbulb, Sparkles } from '@/lib/icons';
+import { Camera, UploadCloud, Lightbulb, Pill, Sparkles } from '@/lib/icons';
+import { DrugSearch } from './DrugSearch';
 
-type Mode = 'upload' | 'camera';
+type Mode = 'upload' | 'camera' | 'search';
 
 interface IntakeProps {
   imageSrc: string | null;
@@ -64,6 +65,19 @@ export function Intake({
               <span className="btn__alt" lang="ar" dir="rtl">كاميرا</span>
             </span>
           </button>
+          <button
+            type="button"
+            role="tab"
+            aria-pressed={mode === 'search'}
+            className="intake__segment"
+            onClick={() => setMode('search')}
+          >
+            <Pill size={15} />
+            <span className="btn__copy">
+              <span className="btn__main">By name</span>
+              <span className="btn__alt" lang="ar" dir="rtl">باسم الدوا</span>
+            </span>
+          </button>
         </div>
 
         {mode === 'upload' ? (
@@ -96,7 +110,7 @@ export function Intake({
               aria-label="Upload prescription image"
             />
           </label>
-        ) : (
+        ) : mode === 'camera' ? (
           <div className="dropzone" onClick={onCameraOpen} role="button" tabIndex={0}
                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onCameraOpen(); }}>
             <span className="dropzone__icon" aria-hidden>
@@ -114,8 +128,12 @@ export function Intake({
               </span>
             </button>
           </div>
+        ) : (
+          // mode === 'search' — search by name (LLM + local fuzzy)
+          <DrugSearch embedded />
         )}
 
+        {mode !== 'search' ? (
         <div className="tips stagger">
           <div className="tip">
             <Lightbulb className="tip__icon" />
@@ -136,8 +154,9 @@ export function Intake({
             </div>
           </div>
         </div>
+        ) : null}
 
-        {imageSrc ? (
+        {mode !== 'search' && imageSrc ? (
           <div className="preview-row">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={imageSrc} alt={pendingFilename ?? 'Selected prescription'} className="preview-row__img" />
