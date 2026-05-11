@@ -1,5 +1,9 @@
 import Link from 'next/link';
 
+// Force dynamic rendering so the synthetic /404 prerender in Next 15.5
+// doesn't leak an <Html> import from the legacy Pages router fallback.
+export const dynamic = 'force-dynamic';
+
 export default function NotFound() {
   return (
     <main>
