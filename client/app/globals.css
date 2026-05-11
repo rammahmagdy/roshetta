@@ -19,6 +19,7 @@
 /* --- content (home) ------------------------------------------------------- */
 @import "./styles/hero.css";
 @import "./styles/buttons.css";
+@import "./styles/drug-search.css";
 @import "./styles/intake.css";
 @import "./styles/stepper.css";
 @import "./styles/results.css";

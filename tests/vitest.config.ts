@@ -17,6 +17,7 @@ export default defineConfig({
       '@roshetta/shared/events.js': resolve(__dirname, '../shared/types/events.ts'),
       '@roshetta/shared/schemas.js': resolve(__dirname, '../shared/types/schemas.ts'),
       '@roshetta/shared/country.js': resolve(__dirname, '../shared/types/country.ts'),
+      '@roshetta/shared/drug.js': resolve(__dirname, '../shared/types/drug.ts'),
       '@roshetta/shared': resolve(__dirname, '../shared/types/index.ts'),
     },
   },

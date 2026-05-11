@@ -13,7 +13,8 @@
     "./schemas.js": "./types/schemas.ts",
     "./design/tokens.css": "./design/tokens.css",
     "./design/tokens": "./design/tokens.ts",
-    "./country.js": "./types/country.ts"
+    "./country.js": "./types/country.ts",
+    "./drug.js": "./types/drug.ts"
   },
   "scripts": {
     "build": "echo \"shared is source-only, consumed via TS path imports\"",

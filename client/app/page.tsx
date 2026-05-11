@@ -6,6 +6,7 @@ import type { DecodedPrescription, MedicationEntry } from '@roshetta/shared/pres
 import type { StageName } from '@roshetta/shared/pipeline.js';
 import { submitPrescription, SubmissionError } from '@/lib/api';
 import { Hero } from './components/Hero';
+import { DrugSearch } from './components/DrugSearch';
 import { Intake } from './components/Intake';
 import { CameraModal } from './components/CameraModal';
 import { PipelineStepper, type StageState } from './components/PipelineStepper';
@@ -149,6 +150,8 @@ export default function Home() {
     <>
       <main>
         <Hero />
+
+        <DrugSearch />
 
         <div ref={intakeRef}>
           <Intake

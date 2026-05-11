@@ -3,6 +3,7 @@ import cors from 'cors';
 import { requestId } from './middleware/request-id.js';
 import { errorHandler } from './middleware/error-handler.js';
 import { apiRouter } from './routes/prescriptions.js';
+import { drugsRouter } from './routes/drugs.js';
 
 export function createApp(): express.Express {
   const app = express();
@@ -17,6 +18,7 @@ export function createApp(): express.Express {
   app.use(requestId);
 
   app.use('/api', apiRouter);
+  app.use('/api/drugs', drugsRouter);
 
   app.use(errorHandler);
 
