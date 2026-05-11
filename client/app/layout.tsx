@@ -24,6 +24,11 @@ export const metadata = {
   description: 'Read your doctor’s handwritten prescription and find similar alternatives.',
 };
 
+// Force dynamic rendering at the root so Next never tries to prerender a
+// synthetic /404 (which trips the "<Html> outside _document" bug in some
+// 15.x Docker builds). All pages are still cacheable at the CDN layer.
+export const dynamic = 'force-dynamic';
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${inter.variable} ${arabic.variable}`}>
