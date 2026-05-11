@@ -1,0 +1,86 @@
+/* =========================================================================
+   Roshetta Design System — design tokens
+   ==========================================================================
+   Single source of truth for color, type, spacing, radius, shadow, motion.
+   Consumed by the client (and any future surface) via:
+     @import "@roshetta/shared/design/tokens.css";
+   ========================================================================= */
+
+:root {
+  /* ---------- type ------------------------------------------------------ */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-arabic: "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+
+  /* ---------- ink (soft slate, never pure black) ----------------------- */
+  --ink: #0f172a;
+  --ink-2: #1e293b;
+  --ink-3: #475569;
+  --ink-dim: #64748b;
+  --ink-faint: #94a3b8;
+  --ink-ghost: #cbd5e1;
+
+  /* ---------- surfaces (pure white world) ------------------------------ */
+  --bg: #ffffff;
+  --bg-2: #f1f5f9;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --surface-3: #f1f5f9;
+  --line: #e2e8f0;
+  --line-2: #cbd5e1;
+
+  /* ---------- primary — soft mint green -------------------------------- */
+  --green: #10b981;
+  --green-500: #34d399;
+  --green-600: #059669;
+  --green-700: #047857;
+  --green-50: #ecfdf5;
+  --green-100: #d1fae5;
+  --green-200: #a7f3d0;
+
+  /* ---------- accent — sky blue ---------------------------------------- */
+  --blue: #3b82f6;
+  --blue-400: #60a5fa;
+  --blue-500: #38bdf8;
+  --blue-600: #2563eb;
+  --blue-50: #eff6ff;
+  --blue-100: #dbeafe;
+  --blue-200: #bfdbfe;
+
+  /* ---------- feedback (used sparingly) -------------------------------- */
+  --warn-soft-bg: #fef9e7;
+  --warn-soft-border: #f0e3b3;
+  --warn-soft-ink: #6b5316;
+  --warn: #a16207;
+
+  --error: #b91c1c;
+  --error-bg: #fef2f2;
+  --error-border: #fecaca;
+  --error-ink: #991b1b;
+
+  --success: var(--green);
+
+  /* ---------- spacing (4-based) ---------------------------------------- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 20px;
+  --s-6: 24px; --s-8: 32px; --s-10: 40px; --s-12: 48px; --s-16: 64px;
+  --s-20: 80px; --s-24: 96px;
+
+  /* ---------- radii ----------------------------------------------------- */
+  --r-xs: 4px;  --r-sm: 6px;  --r-md: 10px; --r-lg: 14px;
+  --r-xl: 20px; --r-2xl: 28px; --r-pill: 999px;
+
+  /* ---------- shadows (cool, soft) ------------------------------------- */
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.06), 0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 24px 48px rgba(15, 23, 42, 0.08), 0 8px 16px rgba(15, 23, 42, 0.05);
+  --shadow-glow-green: 0 0 0 8px rgba(16, 185, 129, 0.12);
+  --shadow-glow-blue: 0 0 0 8px rgba(59, 130, 246, 0.12);
+
+  /* ---------- motion ---------------------------------------------------- */
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 140ms;
+  --t-base: 240ms;
+  --t-slow: 400ms;
+  --t-slower: 700ms;
+}

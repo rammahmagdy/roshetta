@@ -1,0 +1,151 @@
+/* =============================================================================
+   base — reset, body backgrounds, app shell, section + card primitives
+   ============================================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: 15.5px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ambient drifting gradient orbs — soft mint top-right, sky-blue bottom-left */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -240px -200px auto auto;
+  width: 760px;
+  height: 760px;
+  background: radial-gradient(closest-side, rgba(16, 185, 129, 0.16), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(20px);
+  animation: drift-a 32s ease-in-out infinite alternate;
+}
+body::after {
+  content: '';
+  position: fixed;
+  inset: auto auto -260px -240px;
+  width: 820px;
+  height: 820px;
+  background: radial-gradient(closest-side, rgba(59, 130, 246, 0.14), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(24px);
+  animation: drift-b 40s ease-in-out infinite alternate;
+}
+
+[lang="ar"], [dir="rtl"] {
+  font-family: var(--font-arabic), var(--font-sans);
+  line-height: 1.7;
+}
+
+button { font: inherit; cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+::selection { background: var(--green-200); color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ---------- shell -------------------------------------------------------- */
+
+main {
+  position: relative;
+  z-index: 1;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--s-10) var(--s-6) var(--s-16);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-10);
+}
+@media (max-width: 720px) {
+  main { padding: var(--s-6) var(--s-4) var(--s-12); gap: var(--s-8); }
+}
+
+main > div { scroll-margin-top: 80px; }
+
+/* ---------- section ------------------------------------------------------ */
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  animation: rise var(--t-slow) var(--ease-out) both;
+  scroll-margin-top: 80px;
+}
+.section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+.section__title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.014em;
+  margin: 0;
+  color: var(--ink);
+}
+/* Arabic mirror — same boldness as the English heading (bold-for-bold). */
+.section__title-alt {
+  display: block;
+  font-family: var(--font-arabic);
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0;
+  margin-top: 4px;
+}
+.section__hint { color: var(--ink-dim); font-size: 13px; }
+.section__hint-alt {
+  display: block;
+  font-family: var(--font-arabic);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-dim);
+  margin-top: 2px;
+}
+
+/* ---------- card --------------------------------------------------------- */
+
+.card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-md);
+  padding: var(--s-8);
+  transition: box-shadow var(--t-base) var(--ease);
+}
+@media (max-width: 720px) { .card { padding: var(--s-5); border-radius: var(--r-xl); } }
+
+.card--featured {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,1) 0%, rgba(248,250,252,1) 100%),
+    radial-gradient(800px 360px at -10% -30%, rgba(16,185,129,0.10), transparent 60%),
+    radial-gradient(800px 360px at 110% -10%, rgba(59,130,246,0.08), transparent 60%);
+  background-blend-mode: normal, normal, normal;
+}

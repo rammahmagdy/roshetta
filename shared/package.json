@@ -1,0 +1,28 @@
+{
+  "name": "@roshetta/shared",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./types/index.ts",
+  "types": "./types/index.ts",
+  "exports": {
+    ".": "./types/index.ts",
+    "./pipeline.js": "./types/pipeline.ts",
+    "./prescription.js": "./types/prescription.ts",
+    "./events.js": "./types/events.ts",
+    "./schemas.js": "./types/schemas.ts",
+    "./design/tokens.css": "./design/tokens.css",
+    "./design/tokens": "./design/tokens.ts",
+    "./country.js": "./types/country.ts"
+  },
+  "scripts": {
+    "build": "echo \"shared is source-only, consumed via TS path imports\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

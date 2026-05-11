@@ -1,0 +1,33 @@
+/* =============================================================================
+   feedback — error + warning banners
+   ============================================================================= */
+
+.error-banner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s-3);
+  padding: var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  color: var(--error-ink);
+  font-size: 14px;
+  align-items: start;
+}
+.error-banner__icon { color: var(--error); margin-top: 2px; }
+.error-banner__body { display: flex; flex-direction: column; gap: var(--s-2); }
+.error-banner__retry { align-self: flex-start; }
+
+.warn-banner {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-md);
+  background: var(--warn-soft-bg);
+  border: 1px solid var(--warn-soft-border);
+  color: var(--warn-soft-ink);
+  font-size: 13px;
+  align-items: start;
+}
+.warn-banner__icon { color: var(--warn); margin-top: 1px; }

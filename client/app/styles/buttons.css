@@ -1,0 +1,86 @@
+/* =============================================================================
+   buttons — primary (green gradient), ghost (white), blue accent
+   Bilingual rule: .btn__copy stacks an English main line over a smaller
+   Arabic gloss; both share the same weight (bold-for-bold).
+   ============================================================================= */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--green);
+  color: #fff;
+  border: 1px solid var(--green-600);
+  border-radius: var(--r-md);
+  padding: 11px 18px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.20);
+  transition:
+    transform var(--t-fast) var(--ease),
+    background var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease);
+}
+.btn:hover:not(:disabled) {
+  background: var(--green-600);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.28);
+  transform: translateY(-1px);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.18);
+}
+.btn:disabled { opacity: 0.5; box-shadow: none; }
+
+.btn--primary { background: linear-gradient(135deg, var(--green-500) 0%, var(--green) 100%); }
+.btn--primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-600) 100%);
+}
+
+.btn--ghost {
+  background: var(--surface);
+  color: var(--ink-2);
+  border: 1px solid var(--line-2);
+  box-shadow: none;
+}
+.btn--ghost:hover:not(:disabled) {
+  background: var(--surface-2);
+  border-color: var(--ink-faint);
+}
+
+.btn--blue {
+  background: var(--blue);
+  border-color: var(--blue-600);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.20);
+}
+.btn--blue:hover:not(:disabled) {
+  background: var(--blue-600);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.28);
+}
+
+.btn--lg { padding: 13px 22px; font-size: 15px; border-radius: var(--r-lg); }
+.btn--icon { padding: 10px; }
+
+/* bilingual button content */
+.btn__copy {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.1;
+  min-width: 0;
+}
+.btn--lg .btn__copy { gap: 3px; }
+.btn__main { font-weight: 600; }
+/* Arabic mirror — same weight (600) per bold-for-bold. */
+.btn__alt {
+  font-family: var(--font-arabic);
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.95;
+  line-height: 1.1;
+}
+.btn--lg .btn__alt { font-size: 13px; }
+.btn--ghost .btn__alt { color: var(--ink-dim); opacity: 1; }

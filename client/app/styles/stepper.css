@@ -1,0 +1,98 @@
+/* =============================================================================
+   pipeline stepper — 4 dots, connecting progress line that fills green→blue
+   ============================================================================= */
+
+.stepper { position: relative; }
+
+.stepper__line {
+  position: absolute;
+  top: 28px;
+  left: 12.5%;
+  right: 12.5%;
+  height: 2px;
+  background: var(--line);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.stepper__line-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--green) 0%, var(--blue) 100%);
+  border-radius: 2px;
+  transition: width var(--t-slower) var(--ease);
+}
+
+.stepper__items {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--s-3);
+}
+@media (max-width: 720px) {
+  .stepper__items { grid-template-columns: 1fr; }
+  .stepper__line { display: none; }
+}
+
+.step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--s-2);
+  padding: var(--s-3) var(--s-2);
+}
+@media (max-width: 720px) { .step { flex-direction: row; text-align: left; } }
+
+.step__icon {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  color: var(--ink-faint);
+  border: 2px solid var(--line);
+  box-shadow: var(--shadow-xs);
+  transition:
+    background var(--t-base) var(--ease),
+    color var(--t-base) var(--ease),
+    border-color var(--t-base) var(--ease),
+    transform var(--t-base) var(--ease);
+  z-index: 1;
+}
+@media (max-width: 720px) { .step__icon { width: 44px; height: 44px; } }
+
+.step.is-running .step__icon {
+  background: var(--green-50);
+  border-color: var(--green);
+  color: var(--green-700);
+  transform: scale(1.06);
+  animation: ring-pulse 1.6s ease-in-out infinite;
+}
+.step.is-done .step__icon { background: var(--green); color: #fff; border-color: var(--green); }
+.step.is-failed .step__icon {
+  background: var(--error-bg);
+  color: var(--error);
+  border-color: var(--error-border);
+}
+
+.step__title { font-size: 13px; font-weight: 600; color: var(--ink); letter-spacing: -0.005em; }
+/* Arabic mirror — bold (600) to match. */
+.step__title-ar {
+  font-family: var(--font-arabic);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  margin-top: 1px;
+}
+.step__meta {
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.step.is-running .step__meta { color: var(--green-700); font-weight: 600; }
+.step.is-done .step__meta { color: var(--green); font-weight: 600; }
+.step.is-failed .step__meta { color: var(--error); font-weight: 600; }

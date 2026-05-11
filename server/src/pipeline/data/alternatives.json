@@ -1,0 +1,154 @@
+{
+  "amoxicillin + clavulanate": {
+    "EG": [
+      { "brandName": "Hibiotic", "activeIngredient": "Amoxicillin + Clavulanate", "strength": "1 g", "form": "tablet", "reason": "Same active ingredients, widely stocked in Egypt." },
+      { "brandName": "Curam",    "activeIngredient": "Amoxicillin + Clavulanate", "strength": "1 g", "form": "tablet", "reason": "Same active ingredients, often lower cost in Egypt." }
+    ],
+    "SA": [
+      { "brandName": "Augmentin",  "activeIngredient": "Amoxicillin + Clavulanate", "strength": "1 g", "form": "tablet", "reason": "Original brand, available in KSA pharmacies." },
+      { "brandName": "Klavox",     "activeIngredient": "Amoxicillin + Clavulanate", "strength": "1 g", "form": "tablet", "reason": "Same active ingredients, common KSA generic." }
+    ],
+    "AE": [
+      { "brandName": "Augmentin",  "activeIngredient": "Amoxicillin + Clavulanate", "strength": "1 g", "form": "tablet", "reason": "Original brand, available in UAE pharmacies." }
+    ],
+    "GLOBAL": [
+      { "brandName": "Amoxiclav",  "activeIngredient": "Amoxicillin + Clavulanate", "strength": "1 g", "form": "tablet", "reason": "Generic, widely available internationally." }
+    ]
+  },
+  "paracetamol + caffeine": {
+    "EG": [
+      { "brandName": "Cetal Extra",   "activeIngredient": "Paracetamol + Caffeine", "strength": "500 mg", "form": "tablet", "reason": "Same active ingredients." },
+      { "brandName": "Abimol Extra",  "activeIngredient": "Paracetamol + Caffeine", "strength": "500 mg", "form": "tablet", "reason": "Same active ingredients, generic equivalent." }
+    ],
+    "SA": [
+      { "brandName": "Panadol Extra", "activeIngredient": "Paracetamol + Caffeine", "strength": "500 mg", "form": "tablet", "reason": "Same product, available in KSA." }
+    ],
+    "AE": [
+      { "brandName": "Panadol Extra", "activeIngredient": "Paracetamol + Caffeine", "strength": "500 mg", "form": "tablet", "reason": "Same product, available in UAE." }
+    ],
+    "GLOBAL": [
+      { "brandName": "Anadin Extra",  "activeIngredient": "Paracetamol + Caffeine", "strength": "500 mg", "form": "tablet", "reason": "Same active ingredients, OTC abroad." }
+    ]
+  },
+  "loratadine": {
+    "EG": [
+      { "brandName": "Lorinase",  "activeIngredient": "Loratadine", "strength": "10 mg", "form": "tablet", "reason": "Generic loratadine." },
+      { "brandName": "Histazine", "activeIngredient": "Loratadine", "strength": "10 mg", "form": "tablet", "reason": "Generic loratadine." }
+    ],
+    "SA": [
+      { "brandName": "Claritine", "activeIngredient": "Loratadine", "strength": "10 mg", "form": "tablet", "reason": "Same brand, available in KSA." }
+    ],
+    "AE": [
+      { "brandName": "Claritine", "activeIngredient": "Loratadine", "strength": "10 mg", "form": "tablet", "reason": "Same brand, available in UAE." }
+    ],
+    "GLOBAL": [
+      { "brandName": "Claratyne", "activeIngredient": "Loratadine", "strength": "10 mg", "form": "tablet", "reason": "Same product (regional naming)." }
+    ]
+  },
+  "xylometazoline": {
+    "EG": [ { "brandName": "Otrivin Saline", "activeIngredient": "Xylometazoline", "strength": "0.1%", "form": "nasal drops", "reason": "Same active ingredient." } ],
+    "SA": [ { "brandName": "Otrivin",        "activeIngredient": "Xylometazoline", "strength": "0.1%", "form": "nasal spray", "reason": "Same active ingredient." } ],
+    "AE": [ { "brandName": "Otrivin",        "activeIngredient": "Xylometazoline", "strength": "0.1%", "form": "nasal spray", "reason": "Same active ingredient." } ]
+  },
+  "bisoprolol": {
+    "EG": [
+      { "brandName": "Bisoprolol-Hexal", "activeIngredient": "Bisoprolol", "strength": "5 mg", "form": "tablet", "reason": "Generic bisoprolol." },
+      { "brandName": "Cardicor",         "activeIngredient": "Bisoprolol", "strength": "5 mg", "form": "tablet", "reason": "Same active ingredient." }
+    ],
+    "SA": [ { "brandName": "Concor",   "activeIngredient": "Bisoprolol", "strength": "5 mg", "form": "tablet", "reason": "Same brand, KSA stock." } ],
+    "AE": [ { "brandName": "Concor",   "activeIngredient": "Bisoprolol", "strength": "5 mg", "form": "tablet", "reason": "Same brand, UAE stock." } ]
+  },
+  "atorvastatin": {
+    "EG": [
+      { "brandName": "Ator",     "activeIngredient": "Atorvastatin", "strength": "20 mg", "form": "tablet", "reason": "Generic atorvastatin." },
+      { "brandName": "Lipocard", "activeIngredient": "Atorvastatin", "strength": "20 mg", "form": "tablet", "reason": "Same active ingredient." }
+    ],
+    "SA": [ { "brandName": "Lipitor",  "activeIngredient": "Atorvastatin", "strength": "20 mg", "form": "tablet", "reason": "Original brand, KSA." } ],
+    "AE": [ { "brandName": "Lipitor",  "activeIngredient": "Atorvastatin", "strength": "20 mg", "form": "tablet", "reason": "Original brand, UAE." } ]
+  },
+  "acetylsalicylic acid": {
+    "EG": [ { "brandName": "Rivo",     "activeIngredient": "Acetylsalicylic Acid", "strength": "75 mg", "form": "tablet", "reason": "Same active ingredient, low-dose cardio-protective." } ],
+    "SA": [ { "brandName": "Aspirin",  "activeIngredient": "Acetylsalicylic Acid", "strength": "81 mg", "form": "tablet", "reason": "Same active ingredient, KSA-standard low dose." } ],
+    "AE": [ { "brandName": "Aspirin",  "activeIngredient": "Acetylsalicylic Acid", "strength": "81 mg", "form": "tablet", "reason": "Same active ingredient." } ]
+  },
+  "trimetazidine": {
+    "EG": [ { "brandName": "Preductal MR", "activeIngredient": "Trimetazidine", "strength": "35 mg", "form": "tablet", "reason": "Original brand, same active ingredient." } ],
+    "SA": [ { "brandName": "Preductal MR", "activeIngredient": "Trimetazidine", "strength": "35 mg", "form": "tablet", "reason": "Same brand, available in KSA." } ]
+  },
+  "esomeprazole": {
+    "EG": [
+      { "brandName": "Esoprazole", "activeIngredient": "Esomeprazole", "strength": "40 mg", "form": "capsule", "reason": "Generic esomeprazole." },
+      { "brandName": "Sompraz",    "activeIngredient": "Esomeprazole", "strength": "40 mg", "form": "capsule", "reason": "Same active ingredient." }
+    ],
+    "SA": [ { "brandName": "Nexium",     "activeIngredient": "Esomeprazole", "strength": "40 mg", "form": "capsule", "reason": "Same brand, KSA." } ],
+    "AE": [ { "brandName": "Nexium",     "activeIngredient": "Esomeprazole", "strength": "40 mg", "form": "capsule", "reason": "Same brand, UAE." } ]
+  },
+  "domperidone": {
+    "EG": [ { "brandName": "Domper",   "activeIngredient": "Domperidone", "strength": "10 mg", "form": "tablet", "reason": "Generic domperidone." } ],
+    "SA": [ { "brandName": "Motilium", "activeIngredient": "Domperidone", "strength": "10 mg", "form": "tablet", "reason": "Same brand, KSA." } ]
+  },
+  "ibuprofen": {
+    "EG": [
+      { "brandName": "Profinal", "activeIngredient": "Ibuprofen", "strength": "100 mg/5 ml", "form": "syrup", "reason": "Same active ingredient, pediatric syrup." },
+      { "brandName": "Advil",    "activeIngredient": "Ibuprofen", "strength": "100 mg/5 ml", "form": "syrup", "reason": "Same active ingredient." }
+    ],
+    "SA": [ { "brandName": "Brufen", "activeIngredient": "Ibuprofen", "strength": "100 mg/5 ml", "form": "syrup", "reason": "Same brand, KSA." } ],
+    "AE": [ { "brandName": "Brufen", "activeIngredient": "Ibuprofen", "strength": "100 mg/5 ml", "form": "syrup", "reason": "Same brand, UAE." } ]
+  },
+  "sodium alginate + sodium bicarbonate": {
+    "EG": [ { "brandName": "Alginac", "activeIngredient": "Sodium Alginate + Sodium Bicarbonate", "strength": "10 ml", "form": "suspension", "reason": "Same active ingredients." } ],
+    "SA": [ { "brandName": "Gaviscon", "activeIngredient": "Sodium Alginate + Sodium Bicarbonate", "strength": "10 ml", "form": "suspension", "reason": "Same brand, KSA." } ]
+  },
+  "diclofenac potassium": {
+    "EG": [
+      { "brandName": "Cataflam",    "activeIngredient": "Diclofenac Potassium", "strength": "50 mg", "form": "tablet", "reason": "Same active ingredient, tablet form." },
+      { "brandName": "Rapidus",     "activeIngredient": "Diclofenac Potassium", "strength": "50 mg", "form": "sachet", "reason": "Generic, faster absorption." },
+      { "brandName": "Adwiflam K",  "activeIngredient": "Diclofenac Potassium", "strength": "50 mg", "form": "tablet", "reason": "Same active ingredient, locally produced." }
+    ],
+    "SA": [ { "brandName": "Cataflam", "activeIngredient": "Diclofenac Potassium", "strength": "50 mg", "form": "tablet", "reason": "Same brand, KSA." } ],
+    "AE": [ { "brandName": "Cataflam", "activeIngredient": "Diclofenac Potassium", "strength": "50 mg", "form": "tablet", "reason": "Same brand, UAE." } ]
+  },
+  "diclofenac sodium": {
+    "EG": [
+      { "brandName": "Voltaren",   "activeIngredient": "Diclofenac Sodium", "strength": "50 mg", "form": "tablet",       "reason": "Original brand, same active ingredient." },
+      { "brandName": "Adwiflam",   "activeIngredient": "Diclofenac Sodium", "strength": "50 mg", "form": "tablet",       "reason": "Locally produced." },
+      { "brandName": "Rofenac",    "activeIngredient": "Diclofenac Sodium", "strength": "1%",    "form": "topical gel",  "reason": "Topical alternative." }
+    ],
+    "SA": [ { "brandName": "Voltaren", "activeIngredient": "Diclofenac Sodium", "strength": "50 mg", "form": "tablet", "reason": "Same brand, KSA." } ],
+    "AE": [ { "brandName": "Voltaren", "activeIngredient": "Diclofenac Sodium", "strength": "50 mg", "form": "tablet", "reason": "Same brand, UAE." } ]
+  },
+  "meloxicam": {
+    "EG": [
+      { "brandName": "Mobitil", "activeIngredient": "Meloxicam", "strength": "15 mg", "form": "tablet", "reason": "Generic meloxicam." },
+      { "brandName": "Movalis", "activeIngredient": "Meloxicam", "strength": "15 mg", "form": "tablet", "reason": "Same active ingredient." }
+    ],
+    "SA": [ { "brandName": "Mobic",   "activeIngredient": "Meloxicam", "strength": "15 mg", "form": "tablet", "reason": "Same brand, KSA." } ],
+    "AE": [ { "brandName": "Mobic",   "activeIngredient": "Meloxicam", "strength": "15 mg", "form": "tablet", "reason": "Same brand, UAE." } ]
+  },
+  "vitamin b1 + b6 + b12": {
+    "EG": [
+      { "brandName": "Neurorubine", "activeIngredient": "Vitamin B1 + B6 + B12", "strength": "1 tab", "form": "tablet", "reason": "Same active ingredients, well-established brand." },
+      { "brandName": "Milga",       "activeIngredient": "Vitamin B1 + B6 + B12", "strength": "1 tab", "form": "tablet", "reason": "Same vitamin combination, often more affordable." },
+      { "brandName": "Neuroton",    "activeIngredient": "Vitamin B1 + B6 + B12", "strength": "1 tab", "form": "tablet", "reason": "Same active ingredients." }
+    ],
+    "SA": [ { "brandName": "Neurobion", "activeIngredient": "Vitamin B1 + B6 + B12", "strength": "1 tab", "form": "tablet", "reason": "Same vitamin combination, KSA." } ]
+  },
+  "calcium carbonate + vitamin d3": {
+    "EG": [
+      { "brandName": "Caltrate", "activeIngredient": "Calcium Carbonate + Vitamin D3", "strength": "600 mg", "form": "tablet", "reason": "Same active ingredients." },
+      { "brandName": "Os-Cal",   "activeIngredient": "Calcium Carbonate + Vitamin D3", "strength": "500 mg", "form": "tablet", "reason": "Same active ingredients." }
+    ],
+    "SA": [ { "brandName": "Caltrate", "activeIngredient": "Calcium Carbonate + Vitamin D3", "strength": "600 mg", "form": "tablet", "reason": "Same product, KSA." } ]
+  },
+  "metformin": {
+    "EG": [
+      { "brandName": "Cidophage",     "activeIngredient": "Metformin", "strength": "500 mg", "form": "tablet",                  "reason": "Locally produced." },
+      { "brandName": "Glucophage XR", "activeIngredient": "Metformin", "strength": "500 mg", "form": "extended-release tablet", "reason": "Slow release." }
+    ],
+    "SA": [ { "brandName": "Glucophage", "activeIngredient": "Metformin", "strength": "500 mg", "form": "tablet", "reason": "Same brand, KSA." } ]
+  },
+  "glimepiride": {
+    "EG": [ { "brandName": "Diapride", "activeIngredient": "Glimepiride", "strength": "2 mg", "form": "tablet", "reason": "Same active ingredient." } ],
+    "SA": [ { "brandName": "Amaryl",   "activeIngredient": "Glimepiride", "strength": "2 mg", "form": "tablet", "reason": "Same brand, KSA." } ]
+  }
+}

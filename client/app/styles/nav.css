@@ -1,0 +1,82 @@
+/* =============================================================================
+   nav — sticky header with brand, links, country switcher
+   ============================================================================= */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  backdrop-filter: saturate(140%) blur(14px);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  background: rgba(255, 255, 255, 0.7);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+}
+.nav__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: var(--s-3) var(--s-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* brand cluster */
+.nav__brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.nav__brand:hover { text-decoration: none; }
+.nav__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--green-500) 0%, var(--green) 100%);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+}
+.nav__name { line-height: 1; font-size: 16px; letter-spacing: -0.012em; }
+.nav__name-ar {
+  font-family: var(--font-arabic);
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 2px;
+  line-height: 1;
+}
+
+/* right side: links + country switcher */
+.nav__right { display: inline-flex; align-items: center; gap: var(--s-2); }
+.nav__links { display: inline-flex; align-items: center; gap: var(--s-2); }
+.nav__link {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding: 8px 12px;
+  border-radius: var(--r-md);
+  color: var(--ink-3);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.1;
+  text-decoration: none;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.nav__link:hover { background: var(--surface-2); color: var(--ink); text-decoration: none; }
+/* Arabic mirror — bold (600) to match English. */
+.nav__link-alt {
+  font-family: var(--font-arabic);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink-2);
+  line-height: 1.1;
+}
+@media (max-width: 480px) {
+  .nav__link { padding: 6px 8px; font-size: 12.5px; }
+  .nav__link-alt { font-size: 10.5px; }
+}

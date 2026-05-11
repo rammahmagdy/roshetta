@@ -1,0 +1,69 @@
+/* =============================================================================
+   hero — title (EN + AR same prominence) + one sub line
+   ============================================================================= */
+
+.hero {
+  padding: var(--s-12) 0 var(--s-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+  align-items: flex-start;
+}
+@media (max-width: 720px) { .hero { padding: var(--s-6) 0 0; } }
+
+.hero__title {
+  font-size: clamp(36px, 6.4vw, 64px);
+  letter-spacing: -0.025em;
+  line-height: 1.04;
+  margin: 0;
+  color: var(--ink);
+  font-weight: 700;
+  max-width: 16ch;
+  animation: rise var(--t-slow) var(--ease-out) both;
+}
+.hero__title em {
+  font-style: normal;
+  background: linear-gradient(120deg, var(--green) 0%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Arabic hero title — near-equal prominence to English (user request). */
+.hero__title-ar {
+  font-family: var(--font-arabic);
+  font-size: clamp(30px, 5.4vw, 56px);
+  letter-spacing: -0.005em;
+  line-height: 1.25;
+  margin: 0;
+  color: var(--ink);
+  font-weight: 700;
+  max-width: 22ch;
+  animation: rise var(--t-slow) var(--ease-out) 60ms both;
+}
+.hero__title-ar em {
+  font-style: normal;
+  background: linear-gradient(120deg, var(--green) 0%, var(--blue) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero__sub {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 17px;
+  max-width: none;
+  white-space: nowrap;
+  animation: rise var(--t-slow) var(--ease-out) 120ms both;
+}
+@media (max-width: 720px) { .hero__sub { white-space: normal; max-width: 44ch; } }
+
+.hero__sub-ar {
+  margin: 0;
+  font-family: var(--font-arabic);
+  color: var(--ink-dim);
+  font-size: 15px;
+  max-width: none;
+  animation: rise var(--t-slow) var(--ease-out) 180ms both;
+}

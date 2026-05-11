@@ -1,0 +1,29 @@
+{
+  "name": "roshetta",
+  "private": true,
+  "version": "0.1.0",
+  "description": "AI-powered medical prescription reader (local MVP, simulated vision pipeline).",
+  "workspaces": [
+    "shared",
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm --workspace server run dev\" \"npm --workspace client run dev\"",
+    "dev:server": "npm --workspace server run dev",
+    "dev:client": "npm --workspace client run dev",
+    "build": "npm --workspace shared run build && npm --workspace server run build && npm --workspace client run build",
+    "start:prod": "concurrently -n server,client -c blue,green \"npm --workspace server run start\" \"npm --workspace client run start\"",
+    "test": "npm --workspace server run test",
+    "test:unit": "npm --workspace server run test:unit",
+    "test:integration": "npm --workspace server run test:integration",
+    "smoke": "npm --workspace server run smoke",
+    "typecheck": "npm --workspace shared run typecheck && npm --workspace server run typecheck && npm --workspace client run typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

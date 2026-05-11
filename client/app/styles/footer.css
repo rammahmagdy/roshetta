@@ -1,0 +1,21 @@
+/* =============================================================================
+   footer — single hairline line, just the brand
+   ============================================================================= */
+
+.footer {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid var(--line);
+  padding: var(--s-6) var(--s-6);
+  margin-top: var(--s-12);
+  color: var(--ink-faint);
+  background: rgba(255,255,255,0.6);
+}
+.footer__inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12.5px;
+}

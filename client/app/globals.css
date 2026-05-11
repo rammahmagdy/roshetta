@@ -1,0 +1,29 @@
+/* =============================================================================
+   Roshetta — client styles entry point
+   Design tokens live in @roshetta/shared/design/tokens.css.
+   Component styles are split into focused files under ./styles/.
+   ============================================================================= */
+
+/* --- design tokens (single source of truth) -------------------------------- */
+@import "@roshetta/shared/design/tokens.css";
+
+/* --- foundation ------------------------------------------------------------ */
+@import "./styles/base.css";
+@import "./styles/animations.css";
+
+/* --- chrome --------------------------------------------------------------- */
+@import "./styles/nav.css";
+@import "./styles/country.css";
+@import "./styles/footer.css";
+
+/* --- content (home) ------------------------------------------------------- */
+@import "./styles/hero.css";
+@import "./styles/buttons.css";
+@import "./styles/intake.css";
+@import "./styles/stepper.css";
+@import "./styles/results.css";
+@import "./styles/overlays.css";
+@import "./styles/feedback.css";
+
+/* --- secondary pages ------------------------------------------------------ */
+@import "./styles/about-contact.css";

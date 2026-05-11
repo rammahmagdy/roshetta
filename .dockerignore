@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env
+.env.*
+*.log
+.DS_Store
+tests/fixtures/*.png
+specs/
+docs/
+README.md
+DEPLOY.md
