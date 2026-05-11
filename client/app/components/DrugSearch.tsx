@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { DrugInfo, DrugMatch } from '@roshetta/shared/drug.js';
+import { findCountry } from '@roshetta/shared/country.js';
 import { searchDrugs, lookupDrug } from '@/lib/drugs';
 import { useCountry } from './CountryContext';
 import { Alert, ArrowRight, Pill, Shield, Sparkles, Swap, X } from '@/lib/icons';
@@ -218,6 +219,7 @@ export function DrugSearch({ embedded = false }: DrugSearchProps = {}) {
 // Drug detail card
 // -----------------------------------------------------------------------------
 function DrugInfoCard({ info }: { info: DrugInfo }) {
+  const countryMeta = findCountry(info.country);
   return (
     <div className="drug-info" role="region" aria-label={`Details for ${info.canonicalName}`}>
       <header className="drug-info__head">
@@ -268,8 +270,11 @@ function DrugInfoCard({ info }: { info: DrugInfo }) {
 
       <div className="drug-info__alts-head">
         <h4>
-          Alternatives in {info.country}
-          <span lang="ar" dir="rtl">البدائل في {info.country}</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <span aria-hidden>{countryMeta.flag}</span>
+            Alternatives in {countryMeta.name}
+          </span>
+          <span lang="ar" dir="rtl">البدائل في {countryMeta.nameAr}</span>
         </h4>
         <span className="country-pill" style={{ marginInlineStart: 'auto' }}>
           <Swap size={12} /> {info.alternatives.length}
