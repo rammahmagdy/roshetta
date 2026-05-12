@@ -1,6 +1,7 @@
+import { randomUUID } from 'node:crypto';
 import type { PipelineEvent } from '@roshetta/shared/events.js';
 import type { StageName } from '@roshetta/shared/pipeline.js';
-import type { DecodedPrescription } from '@roshetta/shared/prescription.js';
+import type { DecodedPrescription, MedicationEntry } from '@roshetta/shared/prescription.js';
 import { type CountryCode, DEFAULT_COUNTRY } from '@roshetta/shared/country.js';
 import { runPreprocessor } from './preprocessor.js';
 import { runOcrReader } from './ocr-reader.js';
@@ -60,21 +61,52 @@ export async function runPipeline(
       height: preprocessed.height,
     }), onEvent);
 
-  const nlp = await runStage('nlp-parser', () =>
-    runNlpParser({ rawText: ocr.rawText }), onEvent);
+  // NLP stage. Two paths:
+  //  1. The vision provider returned STRUCTURED medications → assign IDs
+  //     and hand them straight to the alternatives finder. Skip the regex
+  //     parser entirely (it's only useful for mock-text fallback).
+  //  2. Otherwise → run the legacy regex parser over the raw text.
+  let nlpMedications: MedicationEntry[];
+  let nlpWarnings: string[];
+
+  if (ocr.structuredMedications && ocr.structuredMedications.length > 0) {
+    nlpMedications = await runStage('nlp-parser', async () => {
+      // Tiny pause so the UI's stepper feels natural and the user sees the
+      // stage transition. The LLM did the parsing work already.
+      await new Promise((r) => setTimeout(r, 300));
+      return ocr.structuredMedications!.map((m) => ({
+        id: randomUUID(),
+        rawName: m.rawName,
+        canonicalName: m.canonicalName,
+        activeIngredient: m.activeIngredient,
+        strength: m.strength,
+        form: m.form,
+        frequency: m.frequency,
+        duration: m.duration,
+        indication: m.indication,
+        confidence: m.confidence,
+      }));
+    }, onEvent);
+    nlpWarnings = ocr.warnings ?? [];
+  } else {
+    const nlp = await runStage('nlp-parser', () =>
+      runNlpParser({ rawText: ocr.rawText }), onEvent);
+    nlpMedications = nlp.medications;
+    nlpWarnings = nlp.warnings;
+  }
 
   const alternatives = await runStage('alternatives-finder', () =>
     runAlternativesFinder({
-      medications: nlp.medications,
+      medications: nlpMedications,
       country: input.country ?? DEFAULT_COUNTRY,
     }), onEvent);
 
   const totalDurationMs = Date.now() - overallStart;
   const result: DecodedPrescription = {
-    medications: nlp.medications,
+    medications: nlpMedications,
     alternativesByMedicationId: alternatives.alternativesByMedicationId,
     simulated: true,
-    warnings: nlp.warnings,
+    warnings: nlpWarnings,
   };
 
   onEvent({ type: 'pipeline_complete', result, totalDurationMs });

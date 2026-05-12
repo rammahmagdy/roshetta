@@ -62,6 +62,63 @@ export const KNOWN_BRANDS: Record<string, BrandInfo> = {
   // -------- diabetes ---------------------------------------------------
   glucophage: { canonical: 'Glucophage', activeIngredient: 'Metformin', form: 'tablet', defaultIndication: 'type 2 diabetes' },
   amaryl: { canonical: 'Amaryl', activeIngredient: 'Glimepiride', form: 'tablet', defaultIndication: 'type 2 diabetes' },
+
+  // -------- muscle relaxants -------------------------------------------
+  'multi relax': { canonical: 'Multi Relax', activeIngredient: 'Methocarbamol + Paracetamol', form: 'tablet', defaultIndication: 'muscle pain / spasm' },
+  multirelax: { canonical: 'Multi Relax', activeIngredient: 'Methocarbamol + Paracetamol', form: 'tablet', defaultIndication: 'muscle pain / spasm' },
+  myolastan: { canonical: 'Myolastan', activeIngredient: 'Tetrazepam', form: 'tablet', defaultIndication: 'muscle spasm' },
+  sirdalud: { canonical: 'Sirdalud', activeIngredient: 'Tizanidine', form: 'tablet', defaultIndication: 'muscle spasm' },
+  myogesic: { canonical: 'Myogesic', activeIngredient: 'Orphenadrine + Paracetamol', form: 'tablet', defaultIndication: 'muscle pain' },
+
+  // -------- paracetamol family (common in pediatric / pain prescriptions)
+  captin: { canonical: 'Captin', activeIngredient: 'Paracetamol', form: 'tablet', defaultIndication: 'fever / pain' },
+  'captin plus': { canonical: 'Captin Plus', activeIngredient: 'Paracetamol + Caffeine', form: 'tablet', defaultIndication: 'fever / pain' },
+  adol: { canonical: 'Adol', activeIngredient: 'Paracetamol', form: 'tablet', defaultIndication: 'fever / pain' },
+  cetal: { canonical: 'Cetal', activeIngredient: 'Paracetamol', form: 'tablet', defaultIndication: 'fever / pain' },
+  abimol: { canonical: 'Abimol', activeIngredient: 'Paracetamol', form: 'tablet', defaultIndication: 'fever / pain' },
+
+  // -------- Meloxicam brands (Mobitil / Movalis are common in EG) ------
+  mobitil: { canonical: 'Mobitil', activeIngredient: 'Meloxicam', form: 'tablet', defaultIndication: 'arthritis / inflammation' },
+  movalis: { canonical: 'Movalis', activeIngredient: 'Meloxicam', form: 'tablet', defaultIndication: 'arthritis / inflammation' },
+
+  // -------- topical / dermatology --------------------------------------
+  'maxi care': { canonical: 'Maxi Care', activeIngredient: 'Moisturizing complex', form: 'cream', defaultIndication: 'dry / irritated skin' },
+  maxicare: { canonical: 'Maxi Care', activeIngredient: 'Moisturizing complex', form: 'cream', defaultIndication: 'dry / irritated skin' },
+  bioderma: { canonical: 'Bioderma', activeIngredient: 'Skincare formula', form: 'cream', defaultIndication: 'sensitive skin' },
+  cetaphil: { canonical: 'Cetaphil', activeIngredient: 'Skincare formula', form: 'cream', defaultIndication: 'sensitive skin' },
+
+  // -------- antibiotics (extras) ---------------------------------------
+  klacid: { canonical: 'Klacid', activeIngredient: 'Clarithromycin', form: 'tablet', defaultIndication: 'bacterial infection' },
+  zithromax: { canonical: 'Zithromax', activeIngredient: 'Azithromycin', form: 'tablet', defaultIndication: 'bacterial infection' },
+  cipro: { canonical: 'Cipro', activeIngredient: 'Ciprofloxacin', form: 'tablet', defaultIndication: 'bacterial infection' },
+  curam: { canonical: 'Curam', activeIngredient: 'Amoxicillin + Clavulanate', form: 'tablet', defaultIndication: 'bacterial infection' },
+  hibiotic: { canonical: 'Hibiotic', activeIngredient: 'Amoxicillin + Clavulanate', form: 'tablet', defaultIndication: 'bacterial infection' },
+
+  // -------- allergy (extras) -------------------------------------------
+  telfast: { canonical: 'Telfast', activeIngredient: 'Fexofenadine', form: 'tablet', defaultIndication: 'allergy / rhinitis' },
+  histazine: { canonical: 'Histazine', activeIngredient: 'Loratadine', form: 'tablet', defaultIndication: 'allergy / rhinitis' },
+  lorinase: { canonical: 'Lorinase', activeIngredient: 'Loratadine', form: 'tablet', defaultIndication: 'allergy / rhinitis' },
+
+  // -------- pain (extras) ----------------------------------------------
+  profinal: { canonical: 'Profinal', activeIngredient: 'Ibuprofen', form: 'syrup', defaultIndication: 'fever / pain' },
+  advil: { canonical: 'Advil', activeIngredient: 'Ibuprofen', form: 'tablet', defaultIndication: 'fever / pain' },
+  rivo: { canonical: 'Rivo', activeIngredient: 'Acetylsalicylic Acid', form: 'tablet', defaultIndication: 'cardio-protection' },
+  adwiflam: { canonical: 'Adwiflam', activeIngredient: 'Diclofenac Sodium', form: 'tablet', defaultIndication: 'inflammation / pain' },
+  rofenac: { canonical: 'Rofenac', activeIngredient: 'Diclofenac Sodium', form: 'topical gel', defaultIndication: 'localized pain' },
+  'adwiflam k': { canonical: 'Adwiflam K', activeIngredient: 'Diclofenac Potassium', form: 'tablet', defaultIndication: 'acute pain' },
+  rapidus: { canonical: 'Rapidus', activeIngredient: 'Diclofenac Potassium', form: 'sachet', defaultIndication: 'acute pain' },
+
+  // -------- GI (extras) -------------------------------------------------
+  pantoloc: { canonical: 'Pantoloc', activeIngredient: 'Pantoprazole', form: 'tablet', defaultIndication: 'acid reflux' },
+  esoprazole: { canonical: 'Esoprazole', activeIngredient: 'Esomeprazole', form: 'capsule', defaultIndication: 'acid reflux' },
+  sompraz: { canonical: 'Sompraz', activeIngredient: 'Esomeprazole', form: 'capsule', defaultIndication: 'acid reflux' },
+  buscopan: { canonical: 'Buscopan', activeIngredient: 'Hyoscine Butylbromide', form: 'tablet', defaultIndication: 'stomach cramps' },
+
+  // -------- B-vitamin / nerve (extras) ---------------------------------
+  milga: { canonical: 'Milga', activeIngredient: 'Vitamin B1 + B6 + B12', form: 'tablet', defaultIndication: 'nerve support' },
+  neuroton: { canonical: 'Neuroton', activeIngredient: 'Vitamin B1 + B6 + B12', form: 'tablet', defaultIndication: 'nerve support' },
+  neurobion: { canonical: 'Neurobion', activeIngredient: 'Vitamin B1 + B6 + B12', form: 'tablet', defaultIndication: 'nerve support' },
+  riconia: { canonical: 'Riconia', activeIngredient: 'Multivitamin + Minerals', form: 'tablet', defaultIndication: 'general supplementation' },
 };
 
 function normalizeName(name: string): string {

@@ -40,13 +40,19 @@ function mockOcr(input: OcrInput): OcrOutput {
 //   - VISION_PROVIDER_ORDER=anthropic,openai,google
 //   - ANTHROPIC_MODEL / OPENAI_MODEL / GEMINI_MODEL
 export async function runOcrReader(input: OcrInput): Promise<OcrOutput> {
-  // Real vision providers (if configured).
+  // Real vision providers (if configured). Preferred path: provider returns
+  // STRUCTURED medications which skip the regex parser entirely.
   const cascade = await runVisionCascade({
     image: input.processedImage,
     promptHints: { country: 'EG', languages: ['ar', 'en'] },
   });
   if (cascade) {
-    return { rawText: cascade.rawText, detectedLines: cascade.detectedLines };
+    return {
+      rawText: cascade.rawText,
+      detectedLines: cascade.detectedLines,
+      structuredMedications: cascade.medications,
+      warnings: cascade.warnings,
+    };
   }
 
   // Fall back to the deterministic mock pipeline.

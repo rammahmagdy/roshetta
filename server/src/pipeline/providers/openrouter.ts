@@ -1,34 +1,11 @@
-import type { VisionProvider, VisionRequest, VisionResult } from './types.js';
+import type { StructuredMedication, VisionProvider, VisionRequest, VisionResult } from './types.js';
 import { READ_PROMPT } from './types.js';
 
 // =============================================================================
-// OpenRouter provider — single key, many models.
+// OpenRouter provider — single key, many models. Asks the model for STRICT
+// JSON, parses it, and returns StructuredMedication[] directly (skipping the
+// downstream regex parser). Falls back to text-mode on parse failure.
 // =============================================================================
-//
-// OpenRouter is OpenAI-compatible, so we use the `openai` SDK pointed at
-// `https://openrouter.ai/api/v1`. One key gives access to:
-//   - anthropic/claude-3.5-sonnet (best handwriting reader)
-//   - openai/gpt-4o
-//   - google/gemini-pro-1.5 / gemini-2.0-flash
-//   - + many more.
-//
-// We expose two modes:
-//   1. cascade  (default) — try a primary model; on failure or empty result,
-//                            try the next; etc. Fast, cost-effective.
-//   2. ensemble — call N models in parallel and reconcile (longest non-empty
-//                  result wins; in the future, a Claude "judge" can merge).
-//
-// Configure via env:
-//   OPENROUTER_API_KEY=sk-or-v1-...                      (required)
-//   OPENROUTER_MODE=cascade | ensemble                  (default: cascade)
-//   OPENROUTER_MODELS=anthropic/claude-3.5-sonnet,
-//                     openai/gpt-4o,
-//                     google/gemini-2.0-flash-exp:free
-//   OPENROUTER_REFERER=https://roshetta.net             (used by OpenRouter
-//                                                        for site attribution)
-//
-// The dependency `openai` is already in the server's deps (used by the direct
-// OpenAI provider too) — we reuse it here.
 
 const ENDPOINT = 'https://openrouter.ai/api/v1';
 
@@ -51,10 +28,64 @@ function mode(): 'cascade' | 'ensemble' {
   return process.env.OPENROUTER_MODE === 'ensemble' ? 'ensemble' : 'cascade';
 }
 
-async function callOneModel(
-  model: string,
-  image: Buffer,
-): Promise<{ model: string; rawText: string }> {
+interface RawJsonPayload {
+  medications: Array<{
+    raw_name?: string;
+    canonical_name?: string;
+    active_ingredient?: string;
+    strength?: string;
+    form?: string;
+    frequency?: string;
+    duration?: string;
+    indication?: string;
+    confidence?: string;
+  }>;
+  warnings?: string[];
+}
+
+interface ModelCall {
+  model: string;
+  rawResponse: string;
+  medications: StructuredMedication[];
+  warnings: string[];
+}
+
+function normalizeMedication(m: RawJsonPayload['medications'][number]): StructuredMedication {
+  const rawName = (m.raw_name ?? '').trim();
+  const canonicalName = (m.canonical_name ?? '').trim() || rawName || 'Unrecognized item';
+  const isUnrecognized =
+    (m.confidence ?? '').toLowerCase() === 'unrecognized' ||
+    /illegible/i.test(rawName) ||
+    canonicalName.toLowerCase() === 'unrecognized item';
+  return {
+    rawName: rawName || canonicalName,
+    canonicalName,
+    activeIngredient: (m.active_ingredient ?? '').trim(),
+    strength: (m.strength ?? '').trim(),
+    form: (m.form ?? '').trim(),
+    frequency: (m.frequency ?? '').trim() || 'as directed',
+    duration: (m.duration ?? '').trim() || 'as needed',
+    indication: (m.indication ?? '').trim(),
+    confidence: isUnrecognized ? 'unrecognized' : 'confident',
+  };
+}
+
+function reconstructText(medications: StructuredMedication[]): string {
+  return medications
+    .map((m) => `Rx ${m.canonicalName} ${m.strength}\n   ${m.frequency} · ${m.duration}`)
+    .join('\n\n');
+}
+
+/** Strip ```json fences if the model added them anyway. */
+function stripCodeFence(s: string): string {
+  const t = s.trim();
+  if (t.startsWith('```')) {
+    return t.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
+  }
+  return t;
+}
+
+async function callOneModel(model: string, image: Buffer): Promise<ModelCall | null> {
   const { default: OpenAI } = await import('openai');
   const client = new OpenAI({
     apiKey: process.env.OPENROUTER_API_KEY,
@@ -68,7 +99,8 @@ async function callOneModel(
   const base64 = image.toString('base64');
   const response = await client.chat.completions.create({
     model,
-    max_tokens: 1024,
+    max_tokens: 1500,
+    response_format: { type: 'json_object' },
     messages: [
       {
         role: 'user',
@@ -83,34 +115,55 @@ async function callOneModel(
     ],
   });
 
-  const rawText = response.choices[0]?.message?.content?.trim() ?? '';
-  return { model, rawText };
+  const rawResponse = response.choices[0]?.message?.content?.trim() ?? '';
+  if (!rawResponse) return null;
+
+  let parsed: RawJsonPayload;
+  try {
+    parsed = JSON.parse(stripCodeFence(rawResponse)) as RawJsonPayload;
+  } catch (err) {
+    console.warn(`[openrouter] ${model} returned non-JSON: ${rawResponse.slice(0, 160)}`);
+    return null;
+  }
+
+  const medications = Array.isArray(parsed.medications)
+    ? parsed.medications.map(normalizeMedication)
+    : [];
+  const warnings = Array.isArray(parsed.warnings)
+    ? parsed.warnings.filter((w): w is string => typeof w === 'string')
+    : [];
+
+  return { model, rawResponse, medications, warnings };
 }
 
-function isUsable(rawText: string): boolean {
-  if (!rawText) return false;
-  if (rawText.includes('----no readable prescription----')) return false;
-  // Reject any response that has zero Rx lines.
-  return /^\s*Rx\s+/im.test(rawText);
+function isUsable(call: ModelCall | null): call is ModelCall {
+  if (!call) return false;
+  // Any non-empty medications array OR any warnings means we got something
+  // — even a clear "couldn't read this" warning is more useful than fallback
+  // to the mock.
+  return call.medications.length > 0 || call.warnings.length > 0;
 }
 
-function rank(results: { model: string; rawText: string }[]): { model: string; rawText: string } | null {
-  const usable = results.filter((r) => isUsable(r.rawText));
+function score(call: ModelCall): number {
+  // Confident medications count double; unrecognized still count.
+  return call.medications.reduce(
+    (sum, m) => sum + (m.confidence === 'confident' ? 2 : 1),
+    0,
+  );
+}
+
+function rank(results: ModelCall[]): ModelCall | null {
+  const usable = results.filter(isUsable);
   if (usable.length === 0) return null;
-  // Longest non-empty wins for now — more lines / detail = more useful.
-  // (A future improvement: an LLM "judge" call that picks/merges.)
-  return usable.sort((a, b) => b.rawText.length - a.rawText.length)[0]!;
+  return usable.sort((a, b) => score(b) - score(a))[0]!;
 }
 
 async function runCascade(image: Buffer, models: string[]): Promise<VisionResult | null> {
   for (const model of models) {
     try {
-      const { rawText } = await callOneModel(model, image);
-      if (isUsable(rawText)) {
-        const detectedLines = rawText.split(/\r?\n/).filter((l) => l.trim().length > 0).length;
-        return { provider: `openrouter:${model}`, rawText, detectedLines, confidence: 'high' };
-      }
-      console.warn(`[openrouter] ${model} returned no usable text, falling through`);
+      const call = await callOneModel(model, image);
+      if (isUsable(call)) return toVisionResult(call);
+      console.warn(`[openrouter] ${model} returned no usable medications, falling through`);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       console.warn(`[openrouter] ${model} failed: ${msg}`);
@@ -121,16 +174,24 @@ async function runCascade(image: Buffer, models: string[]): Promise<VisionResult
 
 async function runEnsemble(image: Buffer, models: string[]): Promise<VisionResult | null> {
   const settled = await Promise.allSettled(models.map((m) => callOneModel(m, image)));
-  const successes = settled
-    .filter((r): r is PromiseFulfilledResult<{ model: string; rawText: string }> => r.status === 'fulfilled')
-    .map((r) => r.value);
-  const winner = rank(successes);
+  const calls = settled
+    .filter((r): r is PromiseFulfilledResult<ModelCall | null> => r.status === 'fulfilled')
+    .map((r) => r.value)
+    .filter((c): c is ModelCall => c !== null);
+  const winner = rank(calls);
   if (!winner) return null;
-  const detectedLines = winner.rawText.split(/\r?\n/).filter((l) => l.trim().length > 0).length;
+  return toVisionResult(winner, true);
+}
+
+function toVisionResult(call: ModelCall, ensemble = false): VisionResult {
+  const rawText = reconstructText(call.medications);
+  const detectedLines = rawText.split(/\r?\n/).filter((l) => l.trim().length > 0).length;
   return {
-    provider: `openrouter:ensemble:${winner.model}`,
-    rawText: winner.rawText,
+    provider: `openrouter${ensemble ? ':ensemble' : ''}:${call.model}`,
+    rawText,
     detectedLines,
+    medications: call.medications,
+    warnings: call.warnings,
     confidence: 'high',
   };
 }
@@ -143,12 +204,11 @@ export const openrouterVision: VisionProvider = {
       throw new Error('OPENROUTER_API_KEY not set');
     }
     const models = configuredModels();
-    if (models.length === 0) {
-      throw new Error('OPENROUTER_MODELS is empty');
-    }
-    const out = mode() === 'ensemble'
-      ? await runEnsemble(req.image, models)
-      : await runCascade(req.image, models);
+    if (models.length === 0) throw new Error('OPENROUTER_MODELS is empty');
+    const out =
+      mode() === 'ensemble'
+        ? await runEnsemble(req.image, models)
+        : await runCascade(req.image, models);
     if (!out) throw new Error('OpenRouter: no model returned a usable result');
     return out;
   },

@@ -28,17 +28,22 @@ export function AlternativesDrawer({ medication, alternatives, onClose }: Altern
     return () => window.removeEventListener('keydown', handler);
   }, [medication, onClose]);
 
-  // Fetch full drug info (summary, dosing, side effects, contraindications)
-  // when the drawer opens for a recognized medication. Unrecognized items
-  // skip the fetch because the LLM has nothing to work with.
+  // Fetch full drug info. For RECOGNIZED entries we use the canonical name;
+  // for UNRECOGNIZED entries we fall back to whatever the OCR read (rawName)
+  // — the LLM is good at typo correction and can usually identify the drug
+  // even when our parser couldn't.
   useEffect(() => {
     setInfo(null);
     setError(null);
     if (!medication) return;
-    if (medication.confidence === 'unrecognized') return;
+    const lookupTerm =
+      medication.canonicalName && medication.canonicalName !== 'Unrecognized item'
+        ? medication.canonicalName
+        : medication.rawName;
+    if (!lookupTerm || /illegible/i.test(lookupTerm)) return;
     const ac = new AbortController();
     setIsLoading(true);
-    lookupDrug(medication.canonicalName || medication.rawName, country.code, ac.signal)
+    lookupDrug(lookupTerm, country.code, ac.signal)
       .then((res) => setInfo(res.info))
       .catch((err) => {
         if ((err as Error).name !== 'AbortError') {
@@ -73,7 +78,7 @@ export function AlternativesDrawer({ medication, alternatives, onClose }: Altern
             info={info}
             isLoading={isLoading}
             error={error}
-            unrecognized={medication.confidence === 'unrecognized'}
+            rawName={medication.rawName}
           />
 
           {/* ───────── Alternatives in user's country ───────── */}
@@ -125,16 +130,19 @@ interface DrugDetailsSectionProps {
   info: DrugInfo | null;
   isLoading: boolean;
   error: string | null;
-  unrecognized: boolean;
+  rawName: string;
 }
 
-function DrugDetailsSection({ info, isLoading, error, unrecognized }: DrugDetailsSectionProps) {
-  if (unrecognized) {
+function DrugDetailsSection({ info, isLoading, error, rawName }: DrugDetailsSectionProps) {
+  // We try an LLM lookup for every entry — even ones the parser couldn't
+  // recognize — using the rawName from the OCR. So this component only
+  // bails when the rawName is empty / illegible.
+  if (!rawName || /illegible/i.test(rawName)) {
     return (
       <div className="drug-info__empty" dir="auto">
-        We couldn’t recognize this medicine, so there’s no info card.
+        We couldn’t read this line clearly. Please check with your pharmacist.
         <span lang="ar" dir="rtl" style={{ display: 'block', marginTop: 4 }}>
-          الدوا ده مش متعرف عليه — اتأكد من اسمه مع الصيدلي.
+          مش قادرين نقرا السطر ده بدقة — اتأكد مع الصيدلي.
         </span>
       </div>
     );
