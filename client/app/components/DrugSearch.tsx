@@ -253,6 +253,35 @@ function DrugInfoCard({ info }: { info: DrugInfo }) {
         </div>
       ) : null}
 
+      {info.dosing ? (
+        <div className="drug-info__meta">
+          <span className="drug-info__meta-label">Typical dosing</span>
+          <span className="drug-info__meta-label-ar" lang="ar" dir="rtl">الجرعة الموصى بها</span>
+          <span className="drug-info__meta-value" dir="auto">{info.dosing}</span>
+          {info.dosingAr ? (
+            <span className="drug-info__meta-value drug-info__meta-value--ar" lang="ar" dir="rtl">
+              {info.dosingAr}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
+
+      <BilingualBulletList
+        title="Common side effects"
+        titleAr="الآثار الجانبية الشائعة"
+        items={info.sideEffects ?? []}
+        itemsAr={info.sideEffectsAr ?? []}
+        variant="info"
+      />
+
+      <BilingualBulletList
+        title="Don't take if"
+        titleAr="موانع الاستعمال"
+        items={info.contraindications ?? []}
+        itemsAr={info.contraindicationsAr ?? []}
+        variant="warn"
+      />
+
       {info.warnings.length > 0 ? (
         <div className="drug-info__warnings">
           <div className="drug-info__warnings-head">
@@ -305,6 +334,39 @@ function DrugInfoCard({ info }: { info: DrugInfo }) {
           ))}
         </ul>
       )}
+    </div>
+  );
+}
+
+// -----------------------------------------------------------------------------
+// BilingualBulletList — used for "side effects" + "don't take if" sections.
+// Renders English first, with a tiny Arabic mirror line beside each bullet.
+// -----------------------------------------------------------------------------
+export interface BilingualBulletListProps {
+  title: string;
+  titleAr: string;
+  items: readonly string[];
+  itemsAr: readonly string[];
+  /** info: blue accents · warn: cream/amber accents */
+  variant: 'info' | 'warn';
+}
+
+export function BilingualBulletList({ title, titleAr, items, itemsAr, variant }: BilingualBulletListProps) {
+  if (!items || items.length === 0) return null;
+  return (
+    <div className={`bullet-list bullet-list--${variant}`}>
+      <div className="bullet-list__head">
+        <span>{title}</span>
+        <span lang="ar" dir="rtl">{titleAr}</span>
+      </div>
+      <ul>
+        {items.map((item, i) => (
+          <li key={i}>
+            <span dir="auto">{item}</span>
+            {itemsAr[i] ? <span className="bullet-list__ar" lang="ar" dir="rtl">{itemsAr[i]}</span> : null}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

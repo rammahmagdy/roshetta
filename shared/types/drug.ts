@@ -37,7 +37,19 @@ export interface DrugInfo {
   strength?: string;
   /** What the medicine is used for. */
   indication: string;
-  /** Short list of practical warnings (allergies, contraindications, …). */
+  /** Typical adult dosing in plain English, when the LLM is confident. */
+  dosing?: string;
+  /** Arabic mirror of the dosing line. */
+  dosingAr?: string;
+  /** Common side effects (≤ 5). */
+  sideEffects?: string[];
+  /** Arabic mirror of side effects. */
+  sideEffectsAr?: string[];
+  /** Contraindications — when NOT to take it. */
+  contraindications?: string[];
+  /** Arabic mirror of contraindications. */
+  contraindicationsAr?: string[];
+  /** Short list of practical warnings (allergies, dependencies, …). */
   warnings: string[];
   /** Country-aware therapeutic alternatives. */
   alternatives: TherapeuticAlternative[];

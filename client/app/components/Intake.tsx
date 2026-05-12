@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type DragEvent } from 'react';
+import { useEffect, useRef, useState, type DragEvent } from 'react';
 import { Camera, UploadCloud, Lightbulb, Pill, Sparkles } from '@/lib/icons';
 import { DrugSearch } from './DrugSearch';
 
@@ -27,6 +27,18 @@ export function Intake({
 }: IntakeProps) {
   const [mode, setMode] = useState<Mode>('upload');
   const [isDrag, setIsDrag] = useState(false);
+  const previewRef = useRef<HTMLDivElement | null>(null);
+
+  // When the user picks an image, scroll the preview row (with the "Read
+  // prescription" button) into view. Critical on mobile, where the dropzone
+  // already filled the viewport and the button was below the fold.
+  useEffect(() => {
+    if (!imageSrc) return;
+    const id = window.setTimeout(() => {
+      previewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 120);
+    return () => window.clearTimeout(id);
+  }, [imageSrc]);
 
   const handleDrop = (e: DragEvent) => {
     e.preventDefault();
@@ -157,7 +169,7 @@ export function Intake({
         ) : null}
 
         {mode !== 'search' && imageSrc ? (
-          <div className="preview-row">
+          <div className="preview-row" ref={previewRef}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={imageSrc} alt={pendingFilename ?? 'Selected prescription'} className="preview-row__img" />
             <div className="preview-row__meta">

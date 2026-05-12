@@ -286,20 +286,23 @@
 }
 .drug-info__alts-head h4 {
   margin: 0;
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: var(--ink);
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
+/* Arabic mirror — bold-for-bold, comparable size to the English line. */
 .drug-info__alts-head h4 span[lang="ar"] {
   font-family: var(--font-arabic);
   font-weight: 700;
-  font-size: 13.5px;
-  color: var(--ink-dim);
+  font-size: 16px;
+  color: var(--ink);
+  letter-spacing: 0;
 }
+.drug-info__alts-head--in-drawer { margin-top: var(--s-3); padding-top: var(--s-4); border-top: 1px solid var(--line); }
 
 .drug-info__alts {
   list-style: none;
@@ -319,4 +322,106 @@
   border: 1px dashed var(--line-2);
   border-radius: var(--r-md);
   text-align: center;
+}
+
+/* When the drug info appears inside the alternatives drawer (not the search
+ * card), no top border is needed because the drawer already supplies one. */
+.drug-info--in-drawer {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+
+/* Arabic version of the dosing value — shown right under the English line. */
+.drug-info__meta-value--ar {
+  font-family: var(--font-arabic);
+  font-weight: 500;
+  color: var(--ink-2);
+  margin-top: 4px;
+}
+
+/* ----- Bilingual bullet list (side effects + don't take if) -------------- */
+.bullet-list {
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.bullet-list--info { background: var(--blue-50); border-color: var(--blue-100); }
+.bullet-list--warn {
+  background: linear-gradient(180deg, #fefcf2 0%, #fefdf6 100%);
+  border-color: var(--warn-soft-border);
+}
+.bullet-list__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-2);
+  margin-bottom: 6px;
+}
+.bullet-list__head > span:first-child {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.bullet-list--info .bullet-list__head > span:first-child { color: var(--blue-700); }
+.bullet-list--warn .bullet-list__head > span:first-child { color: var(--warn-soft-ink); }
+.bullet-list__head > span[lang="ar"] {
+  font-family: var(--font-arabic);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--ink-2);
+}
+.bullet-list--info .bullet-list__head > span[lang="ar"] { color: var(--blue-700); }
+.bullet-list--warn .bullet-list__head > span[lang="ar"] { color: var(--warn-soft-ink); }
+.bullet-list ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.bullet-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+.bullet-list li::before {
+  content: "•";
+  position: absolute;
+  margin-inline-start: -14px;
+  color: var(--ink-faint);
+}
+.bullet-list li { padding-inline-start: 14px; position: relative; }
+.bullet-list__ar {
+  font-family: var(--font-arabic);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+
+/* ----- Skeleton (drug info loading in the drawer) ----------------------- */
+.drug-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0;
+}
+.drug-skeleton__line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--bg-2) 25%, var(--line) 50%, var(--bg-2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+.drug-skeleton__line--lg { height: 16px; border-radius: 7px; }
+
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
 }
