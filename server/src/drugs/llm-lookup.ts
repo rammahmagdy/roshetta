@@ -1,16 +1,38 @@
 // =============================================================================
-// llm-lookup — ask OpenRouter for canonical drug info given a (possibly
-// misspelled) name. Returns a normalized DrugInfo skeleton; the caller is
-// responsible for merging country-specific alternatives from the local
+// llm-lookup — ask an LLM (OpenAI direct OR OpenRouter) for canonical drug
+// info given a (possibly misspelled) name. Returns a normalized DrugInfo
+// skeleton; the caller merges country-specific alternatives from the local
 // dataset on top.
+//
+// Provider preference: OpenAI direct (if OPENAI_API_KEY is set) → OpenRouter
+// (if OPENROUTER_API_KEY is set). Most setups will use exactly one.
 // =============================================================================
 
 import type { CountryCode } from '@roshetta/shared/country.js';
 import type { TherapeuticAlternative } from '@roshetta/shared/prescription.js';
 
-const ENDPOINT = 'https://openrouter.ai/api/v1';
-const DEFAULT_MODEL = 'anthropic/claude-sonnet-4.5';
-const FALLBACK_MODELS = ['openai/gpt-4o', 'google/gemini-2.5-flash'];
+const OPENROUTER_ENDPOINT = 'https://openrouter.ai/api/v1';
+
+/** Decide which provider + model list to use based on what env vars are set. */
+function pickProvider(): { kind: 'openai' | 'openrouter'; models: string[] } {
+  if (process.env.OPENAI_API_KEY) {
+    return {
+      kind: 'openai',
+      models: [process.env.OPENAI_MODEL ?? 'gpt-4o', 'gpt-4o-mini'],
+    };
+  }
+  if (process.env.OPENROUTER_API_KEY) {
+    const fromEnv = (process.env.OPENROUTER_MODELS ?? '')
+      .split(',').map((m) => m.trim()).filter(Boolean);
+    return {
+      kind: 'openrouter',
+      models: fromEnv.length > 0
+        ? fromEnv
+        : ['anthropic/claude-sonnet-4.5', 'openai/gpt-4o', 'google/gemini-2.5-flash'],
+    };
+  }
+  return { kind: 'openai', models: [] };
+}
 
 /** Raw JSON shape we ask the model to produce. */
 interface LlmDrugPayload {
@@ -78,19 +100,24 @@ Rules:
 `;
 }
 
-async function callModel(model: string, query: string, country: CountryCode): Promise<LlmDrugPayload | null> {
-  const apiKey = process.env.OPENROUTER_API_KEY;
-  if (!apiKey) throw new Error('OPENROUTER_API_KEY not set');
-
+async function callModel(
+  kind: 'openai' | 'openrouter',
+  model: string,
+  query: string,
+  country: CountryCode,
+): Promise<LlmDrugPayload | null> {
   const { default: OpenAI } = await import('openai');
-  const client = new OpenAI({
-    apiKey,
-    baseURL: ENDPOINT,
-    defaultHeaders: {
-      'HTTP-Referer': process.env.OPENROUTER_REFERER ?? 'https://roshetta.net',
-      'X-Title': 'Roshetta',
-    },
-  });
+  const client =
+    kind === 'openai'
+      ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
+      : new OpenAI({
+          apiKey: process.env.OPENROUTER_API_KEY,
+          baseURL: OPENROUTER_ENDPOINT,
+          defaultHeaders: {
+            'HTTP-Referer': process.env.OPENROUTER_REFERER ?? 'https://roshetta.net',
+            'X-Title': 'Roshetta',
+          },
+        });
 
   const completion = await client.chat.completions.create({
     model,
@@ -134,22 +161,19 @@ export interface LlmLookupResult {
 }
 
 /**
- * Cascade: try the primary model, fall through to backups on failure.
+ * Cascade: try each model in order, fall through to backups on failure.
  * Returns null if every model fails OR the drug is unknown.
  */
 export async function llmLookupDrug(
   query: string,
   country: CountryCode,
 ): Promise<LlmLookupResult | null> {
-  const order = [DEFAULT_MODEL, ...FALLBACK_MODELS];
-  const overrideModels = process.env.OPENROUTER_MODELS;
-  const models = overrideModels
-    ? overrideModels.split(',').map((m) => m.trim()).filter(Boolean)
-    : order;
+  const { kind, models } = pickProvider();
+  if (models.length === 0) return null;
 
   for (const model of models) {
     try {
-      const payload = await callModel(model, query, country);
+      const payload = await callModel(kind, model, query, country);
       if (!payload) continue;
       const cap = (arr: unknown, n: number): string[] =>
         Array.isArray(arr) ? (arr.filter((x): x is string => typeof x === 'string').slice(0, n)) : [];

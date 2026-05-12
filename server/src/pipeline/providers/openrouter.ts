@@ -1,10 +1,18 @@
-import type { StructuredMedication, VisionProvider, VisionRequest, VisionResult } from './types.js';
+import type { VisionProvider, VisionRequest, VisionResult } from './types.js';
 import { READ_PROMPT } from './types.js';
+import {
+  isUsable,
+  parseVisionResponse,
+  reconstructText,
+  scoreResponse,
+  type ParsedVisionResponse,
+} from './_parse.js';
 
 // =============================================================================
 // OpenRouter provider — single key, many models. Asks the model for STRICT
-// JSON, parses it, and returns StructuredMedication[] directly (skipping the
-// downstream regex parser). Falls back to text-mode on parse failure.
+// JSON, parses via the shared helper, and returns StructuredMedication[].
+// Supports cascade (try-each-until-success) and ensemble (call all in
+// parallel, pick the highest-scoring response) modes.
 // =============================================================================
 
 const ENDPOINT = 'https://openrouter.ai/api/v1';
@@ -18,71 +26,16 @@ const DEFAULT_MODELS = [
 function configuredModels(): string[] {
   const raw = process.env.OPENROUTER_MODELS;
   if (!raw) return [...DEFAULT_MODELS];
-  return raw
-    .split(',')
-    .map((m) => m.trim())
-    .filter((m) => m.length > 0);
+  return raw.split(',').map((m) => m.trim()).filter((m) => m.length > 0);
 }
 
 function mode(): 'cascade' | 'ensemble' {
   return process.env.OPENROUTER_MODE === 'ensemble' ? 'ensemble' : 'cascade';
 }
 
-interface RawJsonPayload {
-  medications: Array<{
-    raw_name?: string;
-    canonical_name?: string;
-    active_ingredient?: string;
-    strength?: string;
-    form?: string;
-    frequency?: string;
-    duration?: string;
-    indication?: string;
-    confidence?: string;
-  }>;
-  warnings?: string[];
-}
-
 interface ModelCall {
   model: string;
-  rawResponse: string;
-  medications: StructuredMedication[];
-  warnings: string[];
-}
-
-function normalizeMedication(m: RawJsonPayload['medications'][number]): StructuredMedication {
-  const rawName = (m.raw_name ?? '').trim();
-  const canonicalName = (m.canonical_name ?? '').trim() || rawName || 'Unrecognized item';
-  const isUnrecognized =
-    (m.confidence ?? '').toLowerCase() === 'unrecognized' ||
-    /illegible/i.test(rawName) ||
-    canonicalName.toLowerCase() === 'unrecognized item';
-  return {
-    rawName: rawName || canonicalName,
-    canonicalName,
-    activeIngredient: (m.active_ingredient ?? '').trim(),
-    strength: (m.strength ?? '').trim(),
-    form: (m.form ?? '').trim(),
-    frequency: (m.frequency ?? '').trim() || 'as directed',
-    duration: (m.duration ?? '').trim() || 'as needed',
-    indication: (m.indication ?? '').trim(),
-    confidence: isUnrecognized ? 'unrecognized' : 'confident',
-  };
-}
-
-function reconstructText(medications: StructuredMedication[]): string {
-  return medications
-    .map((m) => `Rx ${m.canonicalName} ${m.strength}\n   ${m.frequency} · ${m.duration}`)
-    .join('\n\n');
-}
-
-/** Strip ```json fences if the model added them anyway. */
-function stripCodeFence(s: string): string {
-  const t = s.trim();
-  if (t.startsWith('```')) {
-    return t.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim();
-  }
-  return t;
+  parsed: ParsedVisionResponse;
 }
 
 async function callOneModel(model: string, image: Buffer): Promise<ModelCall | null> {
@@ -116,54 +69,31 @@ async function callOneModel(model: string, image: Buffer): Promise<ModelCall | n
   });
 
   const rawResponse = response.choices[0]?.message?.content?.trim() ?? '';
-  if (!rawResponse) return null;
-
-  let parsed: RawJsonPayload;
-  try {
-    parsed = JSON.parse(stripCodeFence(rawResponse)) as RawJsonPayload;
-  } catch (err) {
-    console.warn(`[openrouter] ${model} returned non-JSON: ${rawResponse.slice(0, 160)}`);
+  const parsed = parseVisionResponse(rawResponse);
+  if (!isUsable(parsed)) {
+    console.warn(`[openrouter] ${model} returned no usable medications`);
     return null;
   }
-
-  const medications = Array.isArray(parsed.medications)
-    ? parsed.medications.map(normalizeMedication)
-    : [];
-  const warnings = Array.isArray(parsed.warnings)
-    ? parsed.warnings.filter((w): w is string => typeof w === 'string')
-    : [];
-
-  return { model, rawResponse, medications, warnings };
+  return { model, parsed };
 }
 
-function isUsable(call: ModelCall | null): call is ModelCall {
-  if (!call) return false;
-  // Any non-empty medications array OR any warnings means we got something
-  // — even a clear "couldn't read this" warning is more useful than fallback
-  // to the mock.
-  return call.medications.length > 0 || call.warnings.length > 0;
-}
-
-function score(call: ModelCall): number {
-  // Confident medications count double; unrecognized still count.
-  return call.medications.reduce(
-    (sum, m) => sum + (m.confidence === 'confident' ? 2 : 1),
-    0,
-  );
-}
-
-function rank(results: ModelCall[]): ModelCall | null {
-  const usable = results.filter(isUsable);
-  if (usable.length === 0) return null;
-  return usable.sort((a, b) => score(b) - score(a))[0]!;
+function toResult(call: ModelCall, ensemble = false): VisionResult {
+  const rawText = reconstructText(call.parsed.medications);
+  return {
+    provider: `openrouter${ensemble ? ':ensemble' : ''}:${call.model}`,
+    rawText,
+    detectedLines: rawText.split(/\r?\n/).filter((l) => l.trim().length > 0).length,
+    medications: call.parsed.medications,
+    warnings: call.parsed.warnings,
+    confidence: 'high',
+  };
 }
 
 async function runCascade(image: Buffer, models: string[]): Promise<VisionResult | null> {
   for (const model of models) {
     try {
       const call = await callOneModel(model, image);
-      if (isUsable(call)) return toVisionResult(call);
-      console.warn(`[openrouter] ${model} returned no usable medications, falling through`);
+      if (call) return toResult(call);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       console.warn(`[openrouter] ${model} failed: ${msg}`);
@@ -174,26 +104,13 @@ async function runCascade(image: Buffer, models: string[]): Promise<VisionResult
 
 async function runEnsemble(image: Buffer, models: string[]): Promise<VisionResult | null> {
   const settled = await Promise.allSettled(models.map((m) => callOneModel(m, image)));
-  const calls = settled
+  const successes = settled
     .filter((r): r is PromiseFulfilledResult<ModelCall | null> => r.status === 'fulfilled')
     .map((r) => r.value)
     .filter((c): c is ModelCall => c !== null);
-  const winner = rank(calls);
-  if (!winner) return null;
-  return toVisionResult(winner, true);
-}
-
-function toVisionResult(call: ModelCall, ensemble = false): VisionResult {
-  const rawText = reconstructText(call.medications);
-  const detectedLines = rawText.split(/\r?\n/).filter((l) => l.trim().length > 0).length;
-  return {
-    provider: `openrouter${ensemble ? ':ensemble' : ''}:${call.model}`,
-    rawText,
-    detectedLines,
-    medications: call.medications,
-    warnings: call.warnings,
-    confidence: 'high',
-  };
+  if (successes.length === 0) return null;
+  const winner = successes.sort((a, b) => scoreResponse(b.parsed) - scoreResponse(a.parsed))[0]!;
+  return toResult(winner, true);
 }
 
 export const openrouterVision: VisionProvider = {

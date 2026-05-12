@@ -1,8 +1,12 @@
 import type { VisionProvider, VisionRequest, VisionResult } from './types.js';
 import { READ_PROMPT } from './types.js';
+import { isUsable, parseVisionResponse, reconstructText } from './_parse.js';
 
-// GPT-4o Vision provider. Lazy-loads `openai` so it only runs when
-// OPENAI_API_KEY is set.
+// =============================================================================
+// OpenAI direct provider — uses GPT-4o (or whatever OPENAI_MODEL says) with
+// JSON-mode for STRUCTURED medications. Lazy-loads the `openai` SDK so the
+// import never runs unless OPENAI_API_KEY is set.
+// =============================================================================
 
 export const openaiVision: VisionProvider = {
   name: 'openai',
@@ -19,7 +23,8 @@ export const openaiVision: VisionProvider = {
 
     const response = await client.chat.completions.create({
       model,
-      max_tokens: 1024,
+      max_tokens: 1500,
+      response_format: { type: 'json_object' },
       messages: [
         {
           role: 'user',
@@ -34,12 +39,18 @@ export const openaiVision: VisionProvider = {
       ],
     });
 
-    const rawText = response.choices[0]?.message?.content?.trim() ?? '';
-    const detectedLines = rawText.split(/\r?\n/).filter((l) => l.trim().length > 0).length;
+    const rawResponse = response.choices[0]?.message?.content?.trim() ?? '';
+    const parsed = parseVisionResponse(rawResponse);
+    if (!isUsable(parsed)) {
+      throw new Error(`OpenAI returned no usable medications (model=${model})`);
+    }
+    const rawText = reconstructText(parsed.medications);
     return {
-      provider: 'openai',
+      provider: `openai:${model}`,
       rawText,
-      detectedLines,
+      detectedLines: rawText.split(/\r?\n/).filter((l) => l.trim().length > 0).length,
+      medications: parsed.medications,
+      warnings: parsed.warnings,
       confidence: 'high',
     };
   },
