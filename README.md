@@ -69,7 +69,7 @@ Cloud Run, and local Docker instructions.
 | Env var | Notes |
 |---|---|
 | `OPENROUTER_API_KEY` | Single key for Claude / GPT / Gemini. Recommended. |
-| `OPENROUTER_MODELS` | csv of model ids, e.g. `anthropic/claude-3.5-sonnet,openai/gpt-4o` |
+| `OPENROUTER_MODELS` | csv of model ids, e.g. `anthropic/claude-sonnet-4.5,openai/gpt-4o` |
 | `OPENROUTER_MODE` | `cascade` (default) or `ensemble` |
 | `ANTHROPIC_API_KEY` | Direct backup |
 | `OPENAI_API_KEY` | Direct backup |

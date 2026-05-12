@@ -20,7 +20,7 @@ Public traffic ──► Next.js (port $PORT, Railway default 8080)
 | Key | Purpose |
 |---|---|
 | `OPENROUTER_API_KEY` | Single key, routes to Claude / GPT / Gemini. Recommended. |
-| `OPENROUTER_MODELS` *(optional)* | csv of model ids. Default: `anthropic/claude-3.5-sonnet,openai/gpt-4o,google/gemini-2.0-flash-exp:free` |
+| `OPENROUTER_MODELS` *(optional)* | csv of model ids. Default: `anthropic/claude-sonnet-4.5,openai/gpt-4o,google/gemini-2.5-flash` |
 | `OPENROUTER_MODE` *(optional)* | `cascade` (default) or `ensemble` |
 | `ANTHROPIC_API_KEY` *(optional)* | Direct Claude key (used if OpenRouter fails). |
 | `OPENAI_API_KEY` *(optional)* | Direct GPT key. |
@@ -98,8 +98,8 @@ curl -X POST \
 
 - **Mock fallback** is free.
 - **OpenRouter** charges per call to whichever model wins the cascade.
-  - `anthropic/claude-3.5-sonnet` is the strongest reader but the priciest.
-  - `google/gemini-2.0-flash-exp:free` is free but less accurate on hard
+  - `anthropic/claude-sonnet-4.5` is the strongest reader but the priciest.
+  - `google/gemini-2.5-flash` is much cheaper but less accurate on hard
     handwriting.
   - With `OPENROUTER_MODE=cascade` and the default order, most images cost
     one Claude call; only failures fall through.

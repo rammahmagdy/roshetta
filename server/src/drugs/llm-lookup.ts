@@ -9,8 +9,8 @@ import type { CountryCode } from '@roshetta/shared/country.js';
 import type { TherapeuticAlternative } from '@roshetta/shared/prescription.js';
 
 const ENDPOINT = 'https://openrouter.ai/api/v1';
-const DEFAULT_MODEL = 'anthropic/claude-3.5-sonnet';
-const FALLBACK_MODELS = ['openai/gpt-4o', 'google/gemini-2.0-flash-exp:free'];
+const DEFAULT_MODEL = 'anthropic/claude-sonnet-4.5';
+const FALLBACK_MODELS = ['openai/gpt-4o', 'google/gemini-2.5-flash'];
 
 /** Raw JSON shape we ask the model to produce. */
 interface LlmDrugPayload {

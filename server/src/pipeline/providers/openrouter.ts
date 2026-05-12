@@ -10,9 +10,9 @@ import { READ_PROMPT } from './types.js';
 const ENDPOINT = 'https://openrouter.ai/api/v1';
 
 const DEFAULT_MODELS = [
-  'anthropic/claude-3.5-sonnet',
+  'anthropic/claude-sonnet-4.5',
   'openai/gpt-4o',
-  'google/gemini-2.0-flash-exp:free',
+  'google/gemini-2.5-flash',
 ] as const;
 
 function configuredModels(): string[] {
