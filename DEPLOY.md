@@ -10,7 +10,8 @@ any Docker-friendly host (Fly, Render, Cloud Run, etc.).
 Public traffic ──► Next.js (port $PORT, Railway default 8080)
                      └── rewrites /api/* ──► Express (internal port 4000)
                                               └── runs the vision pipeline
-                                                   • OpenRouter (default)
+                                                   • Chandra-compatible OCR endpoint (optional)
+                                                   • OpenRouter (default fallback)
                                                    • Anthropic / OpenAI / Google
                                                    • mock fallback
 ```
@@ -19,7 +20,11 @@ Public traffic ──► Next.js (port $PORT, Railway default 8080)
 
 | Key | Purpose |
 |---|---|
-| `OPENROUTER_API_KEY` | Single key, routes to Claude / GPT / Gemini. Recommended. |
+| `CHANDRA_OCR_URL` *(optional)* | Chandra-compatible OCR HTTP endpoint. If configured, Roshetta sends prescription images there before the LLM cascade. |
+| `CHANDRA_OCR_API_KEY` *(optional)* | Bearer token for the Chandra OCR endpoint. |
+| `CHANDRA_OCR_MODE` *(optional)* | `prefer` (default), `only`, or `off`. Use `only` only when a dedicated Chandra service is healthy. |
+| `CHANDRA_OCR_TIMEOUT_MS` *(optional)* | OCR endpoint timeout. Default: `45000`. |
+| `OPENROUTER_API_KEY` | Single key, routes to Claude / GPT / Gemini. Recommended fallback. |
 | `OPENROUTER_MODELS` *(optional)* | csv of model ids. Default: `anthropic/claude-sonnet-4.5,openai/gpt-4o,google/gemini-2.5-flash` |
 | `OPENROUTER_MODE` *(optional)* | `cascade` (default) or `ensemble` |
 | `ANTHROPIC_API_KEY` *(optional)* | Direct Claude key (used if OpenRouter fails). |
@@ -29,7 +34,9 @@ Public traffic ──► Next.js (port $PORT, Railway default 8080)
 | `PORT` | **Railway injects this automatically** for the public process. |
 
 If no key is set, the pipeline still runs — it falls back to bundled mock
-samples so the demo never breaks.
+samples so the demo never breaks. Chandra itself is a separate Python/vLLM
+service; keep it outside the Node container and point `CHANDRA_OCR_URL` at its
+HTTP endpoint when ready.
 
 ## Deploy on Railway (Docker)
 
