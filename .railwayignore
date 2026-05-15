@@ -1,0 +1,15 @@
+node_modules
+.next
+client/.next
+server/dist
+shared/dist
+.git
+.env
+.env.*
+*.log
+.DS_Store
+tests/fixtures/*.png
+specs/
+docs/
+README.md
+DEPLOY.md

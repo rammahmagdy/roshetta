@@ -24,11 +24,25 @@ if (envPath) {
 // The server always uses SERVER_PORT (defaults to 4000). It deliberately
 // ignores PORT because that's reserved for the Next.js client in production
 // — Railway injects PORT for the public-facing process, which is the client.
+const chandraOcrMode = (() => {
+  const raw = (process.env.CHANDRA_OCR_MODE ?? 'prefer').trim().toLowerCase();
+  return raw === 'off' || raw === 'only' || raw === 'prefer' ? raw : 'prefer';
+})();
+
+const chandraOcrTimeoutMs = (() => {
+  const parsed = Number(process.env.CHANDRA_OCR_TIMEOUT_MS ?? 45_000);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 45_000;
+})();
+
 export const env = {
   PORT: Number(process.env.SERVER_PORT ?? 4000),
   isProd: process.env.NODE_ENV === 'production',
+  chandraOcrUrl: process.env.CHANDRA_OCR_URL ?? '',
+  chandraOcrMode,
+  chandraOcrTimeoutMs,
   /** True when any vision provider is configured. */
   hasVision:
+    (chandraOcrMode !== 'off' && Boolean(process.env.CHANDRA_OCR_URL)) ||
     Boolean(process.env.OPENROUTER_API_KEY) ||
     Boolean(process.env.ANTHROPIC_API_KEY) ||
     Boolean(process.env.OPENAI_API_KEY) ||

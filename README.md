@@ -15,8 +15,9 @@ Bilingual UI (English + العربية). Built for the MENA market.
 ## What it does
 
 1. You upload or snap a photo of the prescription.
-2. A vision pipeline reads the writing (OpenRouter → Claude / GPT-4o / Gemini
-   in cascade or ensemble; falls back to bundled mocks if no key is set).
+2. A vision pipeline reads the writing (optional Chandra OCR service first,
+   then OpenRouter → Claude / GPT-4o / Gemini in cascade or ensemble; falls
+   back to bundled mocks if no key is set).
 3. A parser identifies each medication: brand, dose, frequency, duration,
    indication.
 4. The alternatives finder returns equivalents that share the same active
@@ -29,7 +30,7 @@ Bilingual UI (English + العربية). Built for the MENA market.
 |---|---|
 | Client | Next.js 15 · React 19 · TypeScript · IBM Plex Sans Arabic + Inter |
 | Server | Express 4 · TypeScript (tsx) · Multer · sharp |
-| Pipeline | OpenRouter SDK (OpenAI-compatible) + direct SDKs for Anthropic / OpenAI / Google as backups |
+| Pipeline | Chandra OCR-compatible endpoint + OpenRouter SDK (OpenAI-compatible) + direct SDKs for Anthropic / OpenAI / Google as backups |
 | Shared | Workspace package with types, zod schemas, design tokens, country catalog |
 | Tests | vitest (24 unit + integration tests) |
 | Deploy | Docker · Railway |
@@ -68,7 +69,11 @@ Cloud Run, and local Docker instructions.
 
 | Env var | Notes |
 |---|---|
-| `OPENROUTER_API_KEY` | Single key for Claude / GPT / Gemini. Recommended. |
+| `CHANDRA_OCR_URL` | Optional Chandra-compatible OCR HTTP endpoint. When set, Roshetta tries it before the LLM cascade. |
+| `CHANDRA_OCR_API_KEY` | Optional bearer token for the Chandra OCR endpoint. |
+| `CHANDRA_OCR_MODE` | `prefer` (default), `only`, or `off`. `only` fails fast if Chandra is unavailable. |
+| `CHANDRA_OCR_TIMEOUT_MS` | Optional timeout; default `45000`. |
+| `OPENROUTER_API_KEY` | Single key for Claude / GPT / Gemini. Recommended fallback. |
 | `OPENROUTER_MODELS` | csv of model ids, e.g. `anthropic/claude-sonnet-4.5,openai/gpt-4o` |
 | `OPENROUTER_MODE` | `cascade` (default) or `ensemble` |
 | `ANTHROPIC_API_KEY` | Direct backup |

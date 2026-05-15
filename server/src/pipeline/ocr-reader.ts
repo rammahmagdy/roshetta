@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import type { OcrInput, OcrOutput } from '@roshetta/shared/pipeline.js';
 import { OCR_SAMPLES } from './data/ocr-samples.js';
 import { runVisionCascade } from './providers/index.js';
+import { chandraMode, isChandraEnabled, runChandraOcr } from './providers/chandra.js';
 
 const MIN_DELAY_MS = 1000;
 const MAX_DELAY_MS = 1800;
@@ -40,6 +41,23 @@ function mockOcr(input: OcrInput): OcrOutput {
 //   - VISION_PROVIDER_ORDER=anthropic,openai,google
 //   - ANTHROPIC_MODEL / OPENAI_MODEL / GEMINI_MODEL
 export async function runOcrReader(input: OcrInput): Promise<OcrOutput> {
+  const mode = chandraMode();
+  if (isChandraEnabled()) {
+    try {
+      const chandra = await runChandraOcr(input.processedImage);
+      if (chandra) return chandra;
+      console.warn('[ocr] Chandra OCR returned no usable output');
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (mode === 'only') throw new Error(`Chandra OCR failed: ${msg}`);
+      console.warn(`[ocr] Chandra OCR failed, falling back to vision cascade: ${msg}`);
+    }
+  }
+
+  if (mode === 'only') {
+    throw new Error('CHANDRA_OCR_MODE=only requires CHANDRA_OCR_URL and a successful Chandra response.');
+  }
+
   // Real vision providers (if configured). Preferred path: provider returns
   // STRUCTURED medications which skip the regex parser entirely.
   const cascade = await runVisionCascade({
